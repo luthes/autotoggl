@@ -1,13 +1,18 @@
+#!/usr/local/bin/python
 from TogglPy import Toggl
 import random
 import datetime
 import sys
 import argparse
 
-# Create toggl object.
-toggl = Toggl()
+# Get Toggl API key from File
+with open ('.logininfo') as f:
+    creds = str(f.readline())
 
-toggl.setAPIKey('APIKEY')
+# Create Toggl Object
+toggl = Toggl()
+toggl.setAPIKey(creds.strip())
+response = toggl.request("https://www.toggl.com/api/v8/clients")
 
 def print_clients():
     response = toggl.request("https://www.toggl.com/api/v8/clients")
@@ -16,16 +21,35 @@ def print_clients():
 # This will add a record for the currnet day that starts at 10, and is an
 # 8 hour duration
 def daily_record():
-    if datetime.datetime.today().weekday() not in (4,5):
+    if datetime.datetime.today().weekday() not in (4, 5):
         toggl.createTimeEntry(\
                 hourduration=0,\
-                projectname='Disney Project Skye Dev Ops'\
+                projectname='Disney Project Skye Dev Ops',\
                 hour=10\
                 )
-    else
+    else:
         print('Why are you working? It\'s the weekend!')
 
-# This should fill in missing entries with an hour that's about 8 hours.
+# This should fill in missing entries with an hour that's about 9 hours.
 # Perhaps the range should be a list of dates, rather than a range.
-def fill_missing():
-    for day in range(1,30)
+def fill_missing(begin, end):
+    for day in range(begin, end):
+        toggl.createTimeEntry(hourduration=random.randint(7, 9), \
+                projectid='11578007', \
+#                description='Automated Time Entry', \
+                day=day, \
+                hour=5, \
+                minute=15, \
+                )
+
+def main():
+    fill_missing(1, 6)
+    return
+
+if __name__ == "__main__":
+    main()
+
+## Automate missing time entries!
+#for day in (29, 30, 31):
+#	toggl.createTimeEntry(hourduration=9, projectname='someproject', day=day, hour=10)
+#

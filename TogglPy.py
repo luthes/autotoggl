@@ -125,7 +125,8 @@ class Toggl():
         return self.decodeJSON(response)
 
     def createTimeEntry(self, hourduration, projectid=None, projectname=None,
-                        clientname=None, year=None, month=None, day=None, hour=None):
+                        clientname=None, year=None, month=None, day=None, hour=None,\
+                                minute=None):
         """
         Creating a custom time entry, minimum must is hour duration and project param
         :param hourduration:
@@ -136,6 +137,7 @@ class Toggl():
         :param month: Taken from now() if not provided
         :param day: Taken from now() if not provided
         :param hour: Taken from now() if not provided
+        :param minute: Taken from now() if not provided
         :return: response object from post call
         """
         data = {
@@ -155,8 +157,9 @@ class Toggl():
         month = datetime.now().month if not month else month
         day = datetime.now().day if not day else day
         hour = datetime.now().hour if not hour else hour
+        minute = datetime.now().minute if not minute else minute
 
-        timestruct = datetime(year, month, day, hour-2).isoformat() + '.000Z'
+        timestruct = datetime(year, month, day, hour-2, minute).isoformat() + '.000Z'
         data['time_entry']['start'] = timestruct
         data['time_entry']['duration'] = hourduration*3600
         data['time_entry']['pid'] = projectid
