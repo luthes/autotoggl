@@ -124,15 +124,17 @@ class Toggl():
         response = self.postRequest(Endpoints.STOP_TIME(entryid))
         return self.decodeJSON(response)
 
-    def createTimeEntry(self, hourduration, projectid=None, projectname=None,
-                        clientname=None, year=None, month=None, day=None, hour=None,\
-                                minute=None):
+    def createTimeEntry(self, hourduration, projectid=None, projectname=None,\
+                        clientname=None, year=None, description=None,\
+                        month=None, day=None, hour=None, minute=None):
         """
         Creating a custom time entry, minimum must is hour duration and project param
         :param hourduration:
         :param projectid: Not required if projectname given
         :param projectname: Not required if projectid was given
         :param clientname: Can speed up project query process
+        :param description: Can speed up project query process
+        ne, day=None, hour=None, minute=None):
         :param year: Taken from now() if not provided
         :param month: Taken from now() if not provided
         :param day: Taken from now() if not provided
@@ -141,8 +143,8 @@ class Toggl():
         :return: response object from post call
         """
         data = {
-            "time_entry": {}
-        }
+                "time_entry": {}
+                }
 
         if not projectid:
             if projectname and clientname:
@@ -164,8 +166,12 @@ class Toggl():
         data['time_entry']['duration'] = hourduration*3600
         data['time_entry']['pid'] = projectid
         data['time_entry']['created_with'] = 'NAME'
+        data['time_entry']['billable'] = True
+        if description is not None:
+            data['time_entry']['description'] = description
 
         response = self.postRequest(Endpoints.TIME_ENTRIES, parameters=data)
+        print(response)
         return self.decodeJSON(response)
 
     #-----------------------------------
