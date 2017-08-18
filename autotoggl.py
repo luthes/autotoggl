@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 from TogglPy import Toggl
 import random
 import datetime
