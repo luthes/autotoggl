@@ -5,17 +5,6 @@ import datetime
 import ConfigParser
 import argparse
 
-# Get Login info from File
-config = ConfigParser.ConfigParser()
-config.read('.logininfo.cfg')
-config_api_key = config.get('Toggl', 'api_key')
-config_description = str(config.get('Toggl', 'description'))
-
-# Create Toggl Object
-toggl = Toggl()
-toggl.setAPIKey(config_api_key)
-response = toggl.request("https://www.toggl.com/api/v8/clients")
-
 # This will add a record for the currnet day that starts at 10, and is an
 # 8 hour duration
 def daily_record():
