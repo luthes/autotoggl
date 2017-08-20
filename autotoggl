@@ -5,6 +5,11 @@ import datetime
 import ConfigParser
 import argparse
 
+def init():
+    # This should create the config file, as well as symlink the script.
+    # Maybe even add the cron job?
+    return
+
 # This will add a record for the currnet day that starts at 10, and is an
 # 8 hour duration
 def daily_record():
@@ -30,9 +35,6 @@ def fill_missing(begin, end):
                 )
 
 def main():
-#    fill_missing(14, 19)
-#    daily_record()
-
     # Get Login info from File
     config = ConfigParser.ConfigParser()
     config.read('.logininfo.cfg')
