@@ -5,6 +5,11 @@ import datetime
 import ConfigParser
 import argparse
 
+toggl = Toggl()
+config = ConfigParser.ConfigParser()
+config.read('.logininfo.cfg')
+config_api_key = config.get('Toggl', 'api_key')
+
 def init():
     # This should create the config file, as well as symlink the script.
     # Maybe even add the cron job?
@@ -16,19 +21,30 @@ def daily_record():
     if datetime.datetime.today().weekday() not in (4, 5):
         toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5), \
                 projectid='11578007', \
-                description=config_description
+                description=config.get('Toggl', 'description') \
                 )
     else:
         print('Why are you working? It\'s the weekend!')
 
 # This should fill in missing entries with an hour that's about 9 hours.
 # Perhaps the range should be a list of dates, rather than a range.
-# Add a check for Weekends.
+# TODO: Add a check for Weekends.
 def fill_missing(begin, end):
     for day in range(begin, end):
         toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5), \
                 projectid='11578007', \
-                description=config_description, \
+                description=config.get('Toggl', 'description'), \
+                day=day, \
+                hour=5, \
+                minute=random.randint(20,55), \
+                )
+
+def fill_month(begin, end, month):
+    for day in range(begin, end):
+        toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5), \
+                projectid='11578007', \
+                description=config.get('Toggl', 'description'), \
+                month=month, \
                 day=day, \
                 hour=5, \
                 minute=random.randint(20,55), \
@@ -48,6 +64,7 @@ def main():
     # Parse Arguments
     # Arguments:
     #           Fill Missing (Start, End)
+    #           Fill Month (Start, End, Month)
     #           Today's Entry (No arguments)
     parser = argparse.ArgumentParser(description='''Automate Toggl Entries, add
     this to a cron job with the -t flag, or fill missing entries with -f.''')
@@ -58,9 +75,13 @@ def main():
                     between 8 and 9 hours.''',\
             action='store_true')
 
+    parser.add_argument('-m', '--month',\
+            nargs=3,\
+            help='Fill an entire month, weekends included -- -m Day Day Month')
+
     parser.add_argument('-f', '--fill',\
             nargs=2,\
-            help='Add entry for today, defaults to an average of 8.5 hours')
+            help='Fill from Day N to Day N')
     args = vars(parser.parse_args())
 
     if args['today'] == True:
@@ -71,6 +92,16 @@ def main():
         print('First Day: ' + args['fill'][0])
         print('Last Day: ' + args['fill'][1])
         fill_missing(int(args['fill'][0]), int(args['fill'][1]))
+
+    if args['month'] is not None:
+        print('First Day: ' + args['month'][0])
+        print('Last Day: ' + args['month'][1])
+        print('Month: ' + args['month'][2])
+        fill_month(int(args['month'][0]), \
+                   int(args['month'][1]), \
+                   int(args['month'][2]), \
+                   )
+
     return
 
 if __name__ == "__main__":
