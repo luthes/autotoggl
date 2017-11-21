@@ -60,7 +60,7 @@ def single_day(month, day):
             description=config.get('Toggl', 'description'), \
             month=month, \
             day=day, \
-            hour=17, \
+            hour=5, \
             minute=random.randint(20,55), \
             )
     sleep(1)
@@ -89,7 +89,7 @@ def fill_month(begin, end, month):
                     month=month, \
                     day=day, \
                     # This is set for timezone offset
-                    hour=17, \
+                    hour=5, \
                     minute=random.randint(1,59), \
                     )
         except:
