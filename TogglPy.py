@@ -40,7 +40,7 @@ class Toggl():
     }
 
     # default API user agent value
-    user_agent = "TogglPy"
+    user_agent = "steven"
 
     #-------------------------------------------------------------
     # Auxiliary methods
