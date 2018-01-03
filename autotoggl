@@ -78,7 +78,8 @@ def fill_missing(begin, end):
                 hour=5, \
                 minute=random.randint(20,55), \
                 )
-
+# This will fill in an entire month, day n through n, month year
+# TODO: Add a check for Weekends.
 def fill_month(begin, end, month, year):
     for day in range(begin, end):
         toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5), \
