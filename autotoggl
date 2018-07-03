@@ -11,7 +11,7 @@ from time import sleep
 
 # Get Login info from File
 config = ConfigParser.ConfigParser()
-config.read('./logininfo.cfg')
+config.read('./.logininfo.cfg')
 config_api_key = config.get('Toggl', 'api_key')
 
 # Create Toggl Object
@@ -19,9 +19,10 @@ toggl = Toggl()
 toggl.setAPIKey(config_api_key)
 response = toggl.request("https://www.toggl.com/api/v8/clients")
 
+
 def check_config_file(file_path):
     # Config file structure
-    #TODO: Add {0} {1} to pass in keys and description
+    # TODO: Add {0} {1} to pass in keys and description
     config_contents = """[Toggl]
 api_key:{api_key}
 description:Auto generated entry
@@ -32,38 +33,41 @@ description:Auto generated entry
         print("Using config file " + file_path)
         return
     else:
-        #Generate File
-        out_file  = open(file_path, "w+")
+        # Generate File
+        out_file = open(file_path, "w+")
         out_file.write(config_contents.strip())
-        print("Basic config has been generated, please update with values" \
-                "and rerun.")
+        print("Basic config has been generated, please update with values"
+              "and rerun.")
         sys.exit()
+
 
 # This will add a record for the currnet day that starts at 10, and is an
 # Somewhere between 7 and 9 hours with an average of 8.
 def daily_record():
     current_date = datetime.datetime.now()
-    if current_date.isoweekday() in range(1,6):
-        toggl.createTimeEntry(hourduration=random.triangular(7.5, 8.5, 8), \
-                projectid='11578007', \
-                description=config.get('Toggl', 'description') \
-                )
+    if current_date.isoweekday() in range(1, 6):
+        toggl.createTimeEntry(hourduration=random.triangular(7.5, 8.5, 8),
+                              projectid='11578007',
+                              description=config.get('Toggl', 'description')
+                              )
         sleep(1)
     else:
         print('Why are you working? It\'s the weekend!')
 
+
 # Create and entry for a single day
 def single_day(month, day):
-    toggl.createTimeEntry( \
-            hourduration=random.triangular(8, 9, 8.5), \
-            projectid='11578007', \
-            description=config.get('Toggl', 'description'), \
-            month=month, \
-            day=day, \
-            hour=5, \
-            minute=random.randint(20,55), \
+    toggl.createTimeEntry(
+            hourduration=random.triangular(8, 9, 8.5),
+            projectid='11578007',
+            description=config.get('Toggl', 'description'),
+            month=month,
+            day=day,
+            hour=5,
+            minute=random.randint(20, 55),
             )
     sleep(1)
+
 
 # This should fill in missing entries with an hour that's about 9 hours.
 # Perhaps the range should be a list of dates, rather than a range.
@@ -71,27 +75,30 @@ def single_day(month, day):
 def fill_missing(begin, end):
     for day in range(begin, end):
         sleep(1)
-        toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5), \
-                projectid='11578007', \
-                description=config.get('Toggl', 'description'), \
-                day=day, \
-                hour=5, \
-                minute=random.randint(20,55), \
-                )
+        toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5),
+                              projectid='11578007',
+                              description=config.get('Toggl', 'description'),
+                              day=day,
+                              hour=5,
+                              minute=random.randint(20, 55),
+                              )
+
+
 # This will fill in an entire month, day n through n, month year
 # TODO: Add a check for Weekends.
 def fill_month(begin, end, month, year):
     for day in range(begin, end):
-        toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5), \
-                projectid='11578007', \
-                description=config.get('Toggl', 'description'), \
-                month=month, \
-                day=day, \
-                hour=5, \
-                minute=random.randint(20,55), \
-                year=year, \
-                )
+        toggl.createTimeEntry(hourduration=random.triangular(8, 9, 8.5),
+                              projectid='11578007',
+                              description=config.get('Toggl', 'description'),
+                              month=month,
+                              day=day,
+                              hour=17,
+                              minute=random.randint(20, 55),
+                              year=year,
+                              )
         sleep(1)
+
 
 def main():
     # Check for or create config file at path
@@ -105,27 +112,27 @@ def main():
     parser = argparse.ArgumentParser(description='''Automate Toggl Entries, add
     this to a cron job with the -t flag, or fill missing entries with -f.''')
 
-    parser.add_argument('-t', '--today',\
-            default=False,\
-            help='''Add entry for today, defaults to an average of 8.5 hours 
-                    between 8 and 9 hours.''',\
-            action='store_true')
+    parser.add_argument('-t', '--today',
+                        default=False,
+                        help='''Add entry for today, defaults to an average of 
+                            8.5 hours between 8 and 9 hours.''',
+                        action='store_true')
 
-    parser.add_argument('-m', '--month',\
-            nargs=4,\
-            help='Fill an entire month, weekends included -- -m Day Day Month')
+    parser.add_argument('-m', '--month',
+                        nargs=4,
+                        help='Fill an entire month, weekends included -- -m Day Day Month')
 
-    parser.add_argument('-s', '--single',\
-            nargs=2,\
-            help='Fill a single day still uses average time, and description.'\
-            ' -- -s Day Month')
+    parser.add_argument('-s', '--single',
+                        nargs=2,
+                        help='Fill a single day still uses average time, and description.'\
+                        ' -- -s Day Month')
 
-    parser.add_argument('-f', '--fill',\
-            nargs=2,\
-            help='Fill from Day N to Day N')
+    parser.add_argument('-f', '--fill',
+                        nargs=2,
+                        help='Fill from Day N to Day N')
     args = vars(parser.parse_args())
 
-    if args['today'] == True:
+    if args['today'] is True:
         print('Adding Daily Entry')
         daily_record()
 
@@ -142,12 +149,13 @@ def main():
         print('Last Day: ' + args['month'][1])
         print('Month: ' + args['month'][2])
         print('Year: ' + args['month'][3])
-        fill_month(int(args['month'][0]), \
-                   int(args['month'][1]), \
-                   int(args['month'][2]), \
-                   int(args['month'][3]), \
+        fill_month(int(args['month'][0]),
+                   int(args['month'][1]),
+                   int(args['month'][2]),
+                   int(args['month'][3]),
                    )
     return
+
 
 if __name__ == "__main__":
     main()
